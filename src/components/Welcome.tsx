@@ -24,16 +24,14 @@ export default function Welcome({ onNext }: WelcomeProps) {
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             className="inline-block mb-6"
           >
-            <div className="p-4 bg-gradient-to-br from-dark-500 to-dark-700 rounded-2xl shadow-2xl">
-              <Image 
-                src="/logo-blanco.jpeg" 
-                alt="Tu Huella IA Logo" 
-                width={200} 
-                height={200}
-                className="rounded-xl"
-                priority
-              />
-            </div>
+            <Image 
+              src="/logo.jpeg" 
+              alt="Tu Huella IA Logo" 
+              width={200} 
+              height={200}
+              className="rounded-2xl shadow-2xl"
+              priority
+            />
           </motion.div>
           
           <h1 className="text-4xl font-bold bg-gradient-to-r from-dark-500 to-primary-600 bg-clip-text text-transparent mb-2">
