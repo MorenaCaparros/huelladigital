@@ -71,7 +71,6 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
-          <div className="text-6xl mb-4">⚠️</div>
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
             Datos incompletos
           </h2>
@@ -280,7 +279,7 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
                         <span className={`text-xs font-semibold ${
                           sentimentAnalysis.esperanza.change > 0 ? 'text-green-600' : 'text-orange-600'
                         }`}>
-                          {sentimentAnalysis.esperanza.change > 0 ? '↑ Más optimista' : '↓ Cambio de tono'}
+                          {sentimentAnalysis.esperanza.change > 0 ? 'Más optimista' : 'Cambio de tono'}
                         </span>
                       </div>
                     )}
@@ -331,7 +330,7 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
                         <span className={`text-xs font-semibold ${
                           sentimentAnalysis.preocupacion.change > 0 ? 'text-green-600' : 'text-blue-600'
                         }`}>
-                          {sentimentAnalysis.preocupacion.change > 0 ? '↑ Preocupación más constructiva' : '↓ Tono más reflexivo'}
+                          {sentimentAnalysis.preocupacion.change > 0 ? 'Preocupación más constructiva' : 'Tono más reflexivo'}
                         </span>
                       </div>
                     )}
