@@ -22,9 +22,9 @@ export interface SurveyResponse {
 }
 
 // Hora de finalización del evento (30 de octubre 2025, 18:00)
-// TEMPORAL PARA TESTING - Cambiar a fecha pasada para probar ahora
-const EVENT_END_TIME = new Date('2024-01-01T00:00:00'); // ← TESTING MODE
-// const EVENT_END_TIME = new Date('2025-10-30T18:00:00'); // ← DESCOMENTAR ANTES DEL DEPLOY
+// DEBUG MODE: Agrega ?debug=true en la URL para habilitar post-encuesta inmediatamente
+const DEBUG_MODE = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === 'true';
+const EVENT_END_TIME = new Date('2025-10-30T18:00:00');
 
 export default function Home() {
   const [step, setStep] = useState<Step>('welcome');
@@ -35,10 +35,10 @@ export default function Home() {
 
   // Verificar si el evento ya terminó y si el usuario ya participó
   useEffect(() => {
-    // Verificar hora del evento
+    // Verificar hora del evento (o modo debug)
     const checkEventTime = () => {
       const now = new Date();
-      setIsEventEnded(now >= EVENT_END_TIME);
+      setIsEventEnded(DEBUG_MODE || now >= EVENT_END_TIME);
     };
     
     checkEventTime();
@@ -161,6 +161,11 @@ export default function Home() {
 
   return (
     <main className="min-h-screen neural-bg">
+      {DEBUG_MODE && (
+        <div className="fixed top-0 left-0 right-0 bg-yellow-400 text-black text-center py-1 text-xs font-bold z-50">
+          🐛 DEBUG MODE ACTIVO - Post-encuesta habilitada
+        </div>
+      )}
       {step === 'welcome' && <Welcome onNext={() => handleNext()} />}
       {step === 'schedule' && <Schedule onNext={() => handleNext()} />}
       {step === 'register' && <Register onNext={handleNext} />}
