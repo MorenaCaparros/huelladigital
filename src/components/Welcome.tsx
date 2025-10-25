@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface WelcomeProps {
   onNext: () => void;
@@ -21,11 +22,16 @@ export default function Welcome({ onNext }: WelcomeProps) {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="inline-block mb-4"
+            className="inline-block mb-6"
           >
-            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-primary-500 to-accent-500 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg">
-              IA
-            </div>
+            <Image 
+              src="/logo.jpeg" 
+              alt="Tu Huella IA Logo" 
+              width={200} 
+              height={200}
+              className="mx-auto rounded-2xl shadow-lg"
+              priority
+            />
           </motion.div>
           
           <h1 className="text-4xl font-bold text-primary-600 mb-2">
@@ -68,7 +74,7 @@ export default function Welcome({ onNext }: WelcomeProps) {
                 🎯
               </div>
               <div>
-                <h3 className="font-semibold text-gray-800">8 preguntas (5 + 2 abiertas)</h3>
+                <h3 className="font-semibold text-gray-800">7 preguntas (5 + 2 abiertas)</h3>
                 <p className="text-sm text-gray-600">analizadas con IA</p>
               </div>
             </div>

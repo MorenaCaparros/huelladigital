@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -175,9 +176,13 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
               transition={{ delay: 0.2, type: "spring" }}
               className="inline-block mb-4"
             >
-              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary-500 to-accent-500 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
-                IA
-              </div>
+              <Image 
+                src="/logo.jpeg" 
+                alt="Tu Huella IA" 
+                width={120} 
+                height={120}
+                className="mx-auto rounded-xl"
+              />
             </motion.div>
             
             <h1 className="text-4xl font-bold text-primary-600 mb-2">

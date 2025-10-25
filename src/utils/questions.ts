@@ -24,7 +24,7 @@ export const surveyQuestions: Question[] = [
   {
     id: 'preparacion',
     category: '🏛️ Sociedad',
-    question: '¿Qué tan preparada está la sociedad para un mundo automatizado?',
+    question: '¿Qué tan preparada creés que estará la sociedad para un mundo automatizado?',
     type: 'scale',
     labels: { min: 'Nada preparada', max: 'Muy preparada' }
   },
@@ -38,16 +38,16 @@ export const surveyQuestions: Question[] = [
   {
     id: 'educacion',
     category: '📚 Educación',
-    question: '¿Qué impacto tendrá la IA en la accesibilidad de la educación?',
+    question: '¿Qué impacto creés que tendrá la IA en la accesibilidad de la educación?',
     type: 'scale',
     labels: { min: 'Muy desigual', max: 'Muy accesible' }
   },
   {
     id: 'arte',
     category: '🎨 Arte y Cultura',
-    question: '¿Puede la IA crear arte verdaderamente original?',
+    question: '¿Creés que la IA podrá crear arte verdaderamente original?',
     type: 'scale',
-    labels: { min: 'No puede', max: 'Totalmente original' }
+    labels: { min: 'No podrá', max: 'Totalmente original' }
   },
   {
     id: 'esperanza_text',
