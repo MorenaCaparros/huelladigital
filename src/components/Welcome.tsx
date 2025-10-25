@@ -24,9 +24,9 @@ export default function Welcome({ onNext }: WelcomeProps) {
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             className="inline-block mb-6"
           >
-            <div className="p-3 bg-gradient-to-br from-dark-500 to-dark-700 rounded-2xl shadow-2xl">
+            <div className="p-4 bg-gradient-to-br from-dark-500 to-dark-700 rounded-2xl shadow-2xl">
               <Image 
-                src="/logo.jpeg" 
+                src="/logo-blanco.jpeg" 
                 alt="Tu Huella IA Logo" 
                 width={200} 
                 height={200}

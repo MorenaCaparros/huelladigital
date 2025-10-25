@@ -176,9 +176,9 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
               transition={{ delay: 0.2, type: "spring" }}
               className="inline-block mb-4"
             >
-              <div className="p-2 bg-gradient-to-br from-dark-500 to-dark-700 rounded-xl shadow-lg inline-block">
+              <div className="p-3 bg-gradient-to-br from-dark-500 to-dark-700 rounded-xl shadow-lg inline-block">
                 <Image 
-                  src="/logo.jpeg" 
+                  src="/logo-blanco.jpeg" 
                   alt="Tu Huella IA" 
                   width={120} 
                   height={120}
