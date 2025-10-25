@@ -1,0 +1,187 @@
+'use client';
+
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import type { SurveyResponse } from '@/app/page';
+import { surveyQuestions, emotions } from '@/utils/questions';
+
+interface PreSurveyProps {
+  onNext: (data: SurveyResponse) => void;
+}
+
+export default function PreSurvey({ onNext }: PreSurveyProps) {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<SurveyResponse>({});
+  const [direction, setDirection] = useState(0);
+
+  const question = surveyQuestions[currentQuestion];
+  const progress = ((currentQuestion + 1) / surveyQuestions.length) * 100;
+
+  const handleAnswer = (value: number | string) => {
+    setAnswers({ ...answers, [question.id]: value });
+  };
+
+  const handleNext = () => {
+    if (currentQuestion < surveyQuestions.length - 1) {
+      setDirection(1);
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      onNext(answers);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestion > 0) {
+      setDirection(-1);
+      setCurrentQuestion(currentQuestion - 1);
+    }
+  };
+
+  const canProceed = answers[question.id] !== undefined;
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full"
+      >
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-primary-600">
+              Percepción Inicial
+            </h2>
+            <span className="text-sm text-gray-500">
+              {currentQuestion + 1} / {surveyQuestions.length}
+            </span>
+          </div>
+          
+          {/* Progress Bar */}
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <motion.div
+              className="bg-gradient-to-r from-primary-500 to-accent-500 h-2 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+        </div>
+
+        {/* Question */}
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={currentQuestion}
+            custom={direction}
+            initial={{ opacity: 0, x: direction > 0 ? 100 : -100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: direction > 0 ? -100 : 100 }}
+            transition={{ duration: 0.3 }}
+            className="mb-8"
+          >
+            <div className="bg-gradient-to-r from-primary-50 to-accent-50 p-6 rounded-xl mb-6">
+              <p className="text-sm text-primary-600 font-semibold mb-2">
+                {question.category}
+              </p>
+              <h3 className="text-xl font-bold text-gray-800">
+                {question.question}
+              </h3>
+            </div>
+
+            {/* Answer Options */}
+            {question.type === 'scale' ? (
+              <div className="space-y-3">
+                <div className="flex justify-between text-xs text-gray-500 mb-2 px-2">
+                  <span>{question.labels?.min || 'Totalmente en desacuerdo'}</span>
+                  <span>{question.labels?.max || 'Totalmente de acuerdo'}</span>
+                </div>
+                <div className="flex gap-2 justify-between">
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <motion.button
+                      key={value}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleAnswer(value)}
+                      className={`flex-1 h-16 rounded-xl font-semibold text-lg transition-all ${
+                        answers[question.id] === value
+                          ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white shadow-lg scale-105'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      {value}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+            ) : question.type === 'text' ? (
+              <div>
+                <textarea
+                  value={(answers[question.id] as string) || ''}
+                  onChange={(e) => handleAnswer(e.target.value)}
+                  maxLength={question.maxLength}
+                  placeholder={question.placeholder}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"
+                  rows={4}
+                />
+                <div className="flex justify-between mt-2">
+                  <p className="text-xs text-gray-500">
+                    💡 Tu respuesta será analizada con IA
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {((answers[question.id] as string) || '').length} / {question.maxLength}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                {emotions.map((emotion) => (
+                  <motion.button
+                    key={emotion.value}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleAnswer(emotion.value)}
+                    className={`p-6 rounded-xl font-semibold transition-all ${
+                      answers[question.id] === emotion.value
+                        ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    <div className="text-4xl mb-2">{emotion.emoji}</div>
+                    <div>{emotion.label}</div>
+                  </motion.button>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Navigation */}
+        <div className="flex gap-4">
+          {currentQuestion > 0 && (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handlePrevious}
+              className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition-colors"
+            >
+              ← Anterior
+            </motion.button>
+          )}
+          <motion.button
+            whileHover={{ scale: canProceed ? 1.02 : 1 }}
+            whileTap={{ scale: canProceed ? 0.98 : 1 }}
+            onClick={handleNext}
+            disabled={!canProceed}
+            className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
+              canProceed
+                ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white shadow-lg hover:shadow-xl'
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            {currentQuestion === surveyQuestions.length - 1 ? 'Finalizar' : 'Siguiente'} →
+          </motion.button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}

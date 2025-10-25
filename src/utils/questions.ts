@@ -1,0 +1,89 @@
+// Definición de preguntas compartidas entre Pre y Post Survey
+
+export interface Question {
+  id: string;
+  category: string;
+  question: string;
+  type: 'scale' | 'emotion' | 'text';
+  labels?: {
+    min: string;
+    max: string;
+  };
+  placeholder?: string;
+  maxLength?: number;
+}
+
+export const surveyQuestions: Question[] = [
+  {
+    id: 'sociedad',
+    category: '🏛️ Sociedad',
+    question: '¿Creés que la IA mejorará la productividad laboral más de lo que afectará empleos?',
+    type: 'scale',
+    labels: { min: 'Afectará empleos', max: 'Mejorará productividad' }
+  },
+  {
+    id: 'preparacion',
+    category: '🏛️ Sociedad',
+    question: '¿Qué tan preparada está la sociedad para un mundo automatizado?',
+    type: 'scale',
+    labels: { min: 'Nada preparada', max: 'Muy preparada' }
+  },
+  {
+    id: 'salud',
+    category: '🏥 Salud',
+    question: '¿Confiarías en un diagnóstico médico asistido por IA?',
+    type: 'scale',
+    labels: { min: 'No confiaría', max: 'Confiaría totalmente' }
+  },
+  {
+    id: 'educacion',
+    category: '📚 Educación',
+    question: '¿Qué impacto tendrá la IA en la accesibilidad de la educación?',
+    type: 'scale',
+    labels: { min: 'Muy desigual', max: 'Muy accesible' }
+  },
+  {
+    id: 'arte',
+    category: '🎨 Arte y Cultura',
+    question: '¿Puede la IA crear arte verdaderamente original?',
+    type: 'scale',
+    labels: { min: 'No puede', max: 'Totalmente original' }
+  },
+  {
+    id: 'esperanza_text',
+    category: '💭 Reflexión Personal',
+    question: '¿Qué te genera mayor esperanza sobre la IA?',
+    type: 'text',
+    placeholder: 'Escribe tu respuesta aquí...',
+    maxLength: 200
+  },
+  {
+    id: 'preocupacion_text',
+    category: '💭 Reflexión Personal',
+    question: '¿Qué te preocupa más sobre la IA?',
+    type: 'text',
+    placeholder: 'Escribe tu respuesta aquí...',
+    maxLength: 200
+  },
+  {
+    id: 'emocion',
+    category: '💭 General',
+    question: '¿Qué emoción predomina en vos al pensar en el futuro con IA?',
+    type: 'emotion',
+  },
+];
+
+export const emotions = [
+  { value: 'esperanza', label: 'Esperanza', emoji: '🌟' },
+  { value: 'curiosidad', label: 'Curiosidad', emoji: '🔍' },
+  { value: 'preocupacion', label: 'Preocupación', emoji: '😟' },
+  { value: 'miedo', label: 'Miedo', emoji: '😰' },
+];
+
+export const questionLabels: { [key: string]: string } = {
+  sociedad: 'Productividad IA',
+  preparacion: 'Preparación Social',
+  salud: 'Confianza en IA Médica',
+  educacion: 'Accesibilidad Educativa',
+  arte: 'Creatividad IA',
+};
