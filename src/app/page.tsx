@@ -159,17 +159,31 @@ export default function Home() {
     }
   };
 
+  const handleReset = () => {
+    if (confirm('¿Estás seguro? Esto borrará todos los datos guardados y volverás al inicio.')) {
+      localStorage.clear();
+      window.location.reload();
+    }
+  };
+
   return (
     <main className="min-h-screen neural-bg">
       {DEBUG_MODE && (
-        <div className="fixed top-0 left-0 right-0 bg-yellow-400 text-black text-center py-1 text-xs font-bold z-50">
-          🐛 DEBUG MODE ACTIVO - Post-encuesta habilitada
+        <div className="fixed top-0 left-0 right-0 bg-yellow-400 text-black py-2 px-4 z-50 flex items-center justify-between">
+          <span className="text-xs font-bold">🐛 DEBUG MODE ACTIVO - Post-encuesta habilitada</span>
+          <button
+            onClick={handleReset}
+            className="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-1 rounded transition-colors"
+          >
+            🔄 Reset
+          </button>
         </div>
       )}
-      {step === 'welcome' && <Welcome onNext={() => handleNext()} />}
-      {step === 'schedule' && <Schedule onNext={() => handleNext()} />}
-      {step === 'register' && <Register onNext={handleNext} />}
-      {step === 'pre-survey' && <PreSurvey onNext={handleNext} />}
+      <div className={DEBUG_MODE ? 'pt-10' : ''}>
+        {step === 'welcome' && <Welcome onNext={() => handleNext()} />}
+        {step === 'schedule' && <Schedule onNext={() => handleNext()} />}
+        {step === 'register' && <Register onNext={handleNext} />}
+        {step === 'pre-survey' && <PreSurvey onNext={handleNext} />}
       {step === 'waiting' && (
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
@@ -211,6 +225,7 @@ export default function Home() {
           postSurveyData={postSurveyData!}
         />
       )}
+      </div>
     </main>
   );
 }
