@@ -22,8 +22,6 @@ export interface SurveyResponse {
 }
 
 // Hora de finalización del evento (30 de octubre 2025, 18:00)
-// DEBUG MODE: Agrega ?debug=true en la URL para habilitar post-encuesta inmediatamente
-const DEBUG_MODE = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === 'true';
 const EVENT_END_TIME = new Date('2025-10-30T18:00:00');
 
 export default function Home() {
@@ -32,13 +30,19 @@ export default function Home() {
   const [preSurveyData, setPreSurveyData] = useState<SurveyResponse | null>(null);
   const [postSurveyData, setPostSurveyData] = useState<SurveyResponse | null>(null);
   const [isEventEnded, setIsEventEnded] = useState(false);
+  const [debugMode, setDebugMode] = useState(false);
 
   // Verificar si el evento ya terminó y si el usuario ya participó
   useEffect(() => {
+    // Detectar modo debug desde la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const isDebug = urlParams.get('debug') === 'true';
+    setDebugMode(isDebug);
+    
     // Verificar hora del evento (o modo debug)
     const checkEventTime = () => {
       const now = new Date();
-      setIsEventEnded(DEBUG_MODE || now >= EVENT_END_TIME);
+      setIsEventEnded(isDebug || now >= EVENT_END_TIME);
     };
     
     checkEventTime();
@@ -168,7 +172,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen neural-bg">
-      {DEBUG_MODE && (
+      {debugMode && (
         <div className="fixed top-0 left-0 right-0 bg-yellow-400 text-black py-2 px-4 z-50 flex items-center justify-between">
           <span className="text-xs font-bold">🐛 DEBUG MODE ACTIVO - Post-encuesta habilitada</span>
           <button
@@ -179,7 +183,7 @@ export default function Home() {
           </button>
         </div>
       )}
-      <div className={DEBUG_MODE ? 'pt-10' : ''}>
+      <div className={debugMode ? 'pt-10' : ''}>
         {step === 'welcome' && <Welcome onNext={() => handleNext()} />}
         {step === 'schedule' && <Schedule onNext={() => handleNext()} />}
         {step === 'register' && <Register onNext={handleNext} />}
