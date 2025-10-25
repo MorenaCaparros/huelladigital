@@ -117,16 +117,14 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
     setDownloading(true);
     try {
       const canvas = await html2canvas(huellaRef.current, {
-        scale: 2,
+        scale: 3,
         backgroundColor: '#ffffff',
       });
       
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      // Formato cuadrado para mejor compartir en redes sociales
+      const pdf = new jsPDF('p', 'px', [1080, 1080]);
+      pdf.addImage(imgData, 'PNG', 0, 0, 1080, 1080);
       pdf.save(`huella-ia-${userData.nombre}-${userData.apellido}.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -141,7 +139,7 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
     setDownloading(true);
     try {
       const canvas = await html2canvas(huellaRef.current, {
-        scale: 2,
+        scale: 3,
         backgroundColor: '#ffffff',
       });
       
