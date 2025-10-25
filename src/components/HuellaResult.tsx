@@ -31,32 +31,11 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
   }>({});
   const [analyzing, setAnalyzing] = useState(true);
 
-  // Validación de datos
-  if (!preSurveyData || !postSurveyData) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
-          <div className="text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            Datos incompletos
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Hubo un problema al cargar tus respuestas. Por favor, intentá completar la encuesta nuevamente.
-          </p>
-          <button
-            onClick={() => window.location.href = '/'}
-            className="bg-gradient-to-r from-accent-500 to-primary-500 text-white font-semibold px-6 py-3 rounded-lg hover:shadow-lg transition-all"
-          >
-            Volver al inicio
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   // Analizar sentimientos al montar el componente
   useEffect(() => {
     async function analyzeSentiments() {
+      if (!preSurveyData || !postSurveyData) return;
+      
       try {
         const results: any = {};
         
@@ -86,6 +65,29 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
     
     analyzeSentiments();
   }, [preSurveyData, postSurveyData]);
+
+  // Validación de datos - DESPUÉS de los hooks
+  if (!preSurveyData || !postSurveyData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Datos incompletos
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Hubo un problema al cargar tus respuestas. Por favor, intentá completar la encuesta nuevamente.
+          </p>
+          <button
+            onClick={() => window.location.href = '/'}
+            className="bg-gradient-to-r from-accent-500 to-primary-500 text-white font-semibold px-6 py-3 rounded-lg hover:shadow-lg transition-all"
+          >
+            Volver al inicio
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Prepare data for radar chart
   const radarData = Object.keys(questionLabels).map(key => ({
