@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Paleta del evento IAxMarDelPlata
+        // Paleta del evento IAxMarDelPlata - ampliada para complementar el logo
         primary: {
           50: '#e6f2ff',
           100: '#b3d9ff',
@@ -34,9 +34,24 @@ const config: Config = {
           800: '#00415d',
           900: '#00202e',
         },
+        // Tonos oscuros que complementan el logo
+        dark: {
+          50: '#f5f7fa',
+          100: '#e4e9f0',
+          200: '#c9d3e0',
+          300: '#a1b1c7',
+          400: '#7088a8',
+          500: '#1a2332', // Azul oscuro del logo
+          600: '#151c28',
+          700: '#10161f',
+          800: '#0a0f15',
+          900: '#05070b',
+        },
         neural: {
           light: '#a3c9e8', // Azul claro de los nodos
+          medium: '#2d7bb6', // Azul medio
           dark: '#1e5a8e', // Azul oscuro
+          darker: '#0f2d47', // Azul muy oscuro
         }
       },
       backgroundImage: {

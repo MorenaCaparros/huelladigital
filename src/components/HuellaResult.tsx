@@ -176,16 +176,18 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
               transition={{ delay: 0.2, type: "spring" }}
               className="inline-block mb-4"
             >
-              <Image 
-                src="/logo.jpeg" 
-                alt="Tu Huella IA" 
-                width={120} 
-                height={120}
-                className="mx-auto rounded-xl"
-              />
+              <div className="p-2 bg-gradient-to-br from-dark-500 to-dark-700 rounded-xl shadow-lg inline-block">
+                <Image 
+                  src="/logo.jpeg" 
+                  alt="Tu Huella IA" 
+                  width={120} 
+                  height={120}
+                  className="rounded-lg"
+                />
+              </div>
             </motion.div>
             
-            <h1 className="text-4xl font-bold text-primary-600 mb-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-dark-500 to-primary-600 bg-clip-text text-transparent mb-2">
               Tu Huella IA
             </h1>
             <p className="text-xl text-gray-700 mb-1">

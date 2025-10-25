@@ -24,17 +24,19 @@ export default function Welcome({ onNext }: WelcomeProps) {
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             className="inline-block mb-6"
           >
-            <Image 
-              src="/logo.jpeg" 
-              alt="Tu Huella IA Logo" 
-              width={200} 
-              height={200}
-              className="mx-auto rounded-2xl shadow-lg"
-              priority
-            />
+            <div className="p-3 bg-gradient-to-br from-dark-500 to-dark-700 rounded-2xl shadow-2xl">
+              <Image 
+                src="/logo.jpeg" 
+                alt="Tu Huella IA Logo" 
+                width={200} 
+                height={200}
+                className="rounded-xl"
+                priority
+              />
+            </div>
           </motion.div>
           
-          <h1 className="text-4xl font-bold text-primary-600 mb-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-dark-500 to-primary-600 bg-clip-text text-transparent mb-2">
             Tu Huella IA
           </h1>
           <p className="text-lg text-accent-600 font-semibold mb-2">
