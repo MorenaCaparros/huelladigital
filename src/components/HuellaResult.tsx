@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { Sparkles, TrendingUp, Download, FileText, Share2 } from 'lucide-react';
 import type { UserData, SurveyResponse } from '@/app/page';
 import { questionLabels, emotions as emotionData } from '@/utils/questions';
 import { compareSentiments, type SentimentAnalysis } from '@/utils/sentimentAnalysis';
@@ -215,8 +216,9 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
             </div>
             
             {emotionChanged ? (
-              <p className="text-center mt-4 text-sm text-primary-600 font-semibold">
-                ✨ Tu perspectiva emocional evolucionó
+              <p className="text-center mt-4 text-sm text-primary-600 font-semibold flex items-center justify-center gap-1">
+                <TrendingUp className="w-4 h-4" />
+                Tu perspectiva emocional evolucionó
               </p>
             ) : (
               <p className="text-center mt-4 text-sm text-gray-600">
@@ -229,14 +231,15 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
           {!analyzing && (sentimentAnalysis.esperanza || sentimentAnalysis.preocupacion) && (
             <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-xl mb-8">
               <h2 className="text-lg font-semibold text-gray-800 mb-4 text-center flex items-center justify-center gap-2">
-                🤖 Análisis de Sentimientos con IA
+                <Sparkles className="w-5 h-5 text-purple-600" />
+                Análisis de Sentimientos con Gemini AI
               </h2>
               
               <div className="space-y-4">
                 {sentimentAnalysis.esperanza && (
                   <div className="bg-white p-4 rounded-lg">
-                    <h3 className="font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                      🌟 Esperanza
+                    <h3 className="font-semibold text-gray-700 mb-2">
+                      Esperanza
                     </h3>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
@@ -286,8 +289,8 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
                 
                 {sentimentAnalysis.preocupacion && (
                   <div className="bg-white p-4 rounded-lg">
-                    <h3 className="font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                      😟 Preocupación
+                    <h3 className="font-semibold text-gray-700 mb-2">
+                      Preocupación
                     </h3>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
@@ -337,17 +340,16 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
               </div>
               
               <p className="text-center text-xs text-gray-500 mt-4">
-                {sentimentAnalysis.esperanza?.before.method === 'gemini' || sentimentAnalysis.preocupacion?.before.method === 'gemini' 
-                  ? '🤖 Analizado con Google Gemini AI'
-                  : '💡 Análisis con librería de sentimientos'}
+                Analizado con Google Gemini AI
               </p>
             </div>
           )}
 
           {analyzing && (
             <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-xl mb-8 text-center">
-              <div className="animate-pulse">
-                <p className="text-gray-600">🤖 Analizando tus respuestas con IA...</p>
+              <div className="animate-pulse flex items-center justify-center gap-2">
+                <Sparkles className="w-5 h-5 text-purple-600" />
+                <p className="text-gray-600">Analizando tus respuestas con IA...</p>
               </div>
             </div>
           )}
@@ -453,26 +455,50 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
         </div>
 
         {/* Download Buttons */}
-        <div className="flex gap-4 mt-8">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={downloadImage}
-            disabled={downloading}
-            className="flex-1 bg-gradient-to-r from-primary-500 to-accent-500 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
+        <div className="space-y-4 mt-8">
+          {/* Social Media Message */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-xl border border-blue-200"
           >
-            {downloading ? '⏳ Generando...' : '📥 Descargar Imagen'}
-          </motion.button>
-          
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={downloadPDF}
-            disabled={downloading}
-            className="flex-1 bg-white border-2 border-primary-500 text-primary-600 font-semibold py-4 px-6 rounded-xl hover:bg-primary-50 transition-all duration-300 disabled:opacity-50"
-          >
-            {downloading ? '⏳ Generando...' : '📄 Descargar PDF'}
-          </motion.button>
+            <div className="flex items-start gap-3">
+              <Share2 className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-gray-800 mb-1">
+                  ¡Compartí tu Huella IA!
+                </p>
+                <p className="text-xs text-gray-600">
+                  Si subís tu resultado a redes sociales, no olvides etiquetarnos: <strong>@Global.IA</strong> y usar <strong>#IAxMDP2025</strong>
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          <div className="flex gap-4">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={downloadImage}
+              disabled={downloading}
+              className="flex-1 bg-gradient-to-r from-primary-500 to-accent-500 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              <Download className="w-5 h-5" />
+              {downloading ? 'Generando...' : 'Descargar Imagen'}
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={downloadPDF}
+              disabled={downloading}
+              className="flex-1 bg-white border-2 border-primary-500 text-primary-600 font-semibold py-4 px-6 rounded-xl hover:bg-primary-50 transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              <FileText className="w-5 h-5" />
+              {downloading ? 'Generando...' : 'Descargar PDF'}
+            </motion.button>
+          </div>
         </div>
 
         {userData.email && (
