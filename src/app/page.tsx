@@ -76,13 +76,8 @@ export default function Home() {
       if (preSurveyData) {
         localStorage.setItem('huellaIA_preSurvey', JSON.stringify(preSurveyData));
       }
-    } else if (newStep === 'result') {
-      // Limpiar localStorage al completar
-      localStorage.removeItem('huellaIA_userId');
-      localStorage.removeItem('huellaIA_step');
-      localStorage.removeItem('huellaIA_userData');
-      localStorage.removeItem('huellaIA_preSurvey');
     }
+    // No limpiar localStorage automáticamente, el usuario puede querer ver sus resultados nuevamente
   };
 
   // Enviar datos a Google Sheets
@@ -157,8 +152,8 @@ export default function Home() {
           hasEmail: !!userData?.email,
         });
         
+        // No limpiar localStorage aún, se limpiará cuando el usuario termine de ver resultados
         setStep('result');
-        saveToLocalStorage('result');
         break;
     }
   };
