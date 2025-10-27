@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { SurveyResponse } from '@/app/page';
 import { surveyQuestions, emotions } from '@/utils/questions';
@@ -17,6 +17,11 @@ export default function PreSurvey({ onNext }: PreSurveyProps) {
   const question = surveyQuestions[currentQuestion];
   const progress = ((currentQuestion + 1) / surveyQuestions.length) * 100;
 
+  // Scroll to top cuando cambia la pregunta
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentQuestion]);
+
   const handleAnswer = (value: number | string) => {
     setAnswers({ ...answers, [question.id]: value });
   };
@@ -25,7 +30,6 @@ export default function PreSurvey({ onNext }: PreSurveyProps) {
     if (currentQuestion < surveyQuestions.length - 1) {
       setDirection(1);
       setCurrentQuestion(currentQuestion + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       onNext(answers);
     }
@@ -35,7 +39,6 @@ export default function PreSurvey({ onNext }: PreSurveyProps) {
     if (currentQuestion > 0) {
       setDirection(-1);
       setCurrentQuestion(currentQuestion - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 

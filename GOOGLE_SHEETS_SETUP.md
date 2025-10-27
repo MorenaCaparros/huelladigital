@@ -119,12 +119,33 @@ NEXT_PUBLIC_GOOGLE_SCRIPT_URL=https://script.google.com/macros/s/TU_SCRIPT_ID_AQ
 
 ## Solución de problemas
 
+### Error 401 Unauthorized
+
+Este es el error más común. Significa que el script no tiene los permisos correctos.
+
+**Solución:**
+1. Ve a tu Google Apps Script
+2. Ve a **Implementar → Administrar implementaciones**
+3. Haz clic en el ícono de **lápiz** (editar) junto a tu implementación activa
+4. Verifica que:
+   - **Ejecutar como**: Yo (tu email) ✅
+   - **Quién tiene acceso**: **Cualquier persona** ✅ (IMPORTANTE - debe decir "Cualquier persona", no "Solo yo")
+5. Si estaba en "Solo yo", cámbialo a "Cualquier persona"
+6. Clic en **Implementar**
+7. Si te pide autorización, dale permisos
+8. **Copia la NUEVA URL** (puede cambiar)
+9. Actualiza `.env.local` y Vercel con la nueva URL
+10. Redeploya en Vercel
+
+**CRÍTICO:** El script debe tener acceso "Cualquier persona" para que tu app web pueda enviarle datos.
+
 ### Los datos no llegan a Google Sheets
 
 1. Verifica que la URL en `.env.local` sea correcta y termine en `/exec`
 2. Asegúrate de haber autorizado el script correctamente
 3. Verifica que el script tenga acceso "Cualquier persona"
 4. Revisa la consola del navegador (F12) para ver errores
+5. Si ves error 401, sigue los pasos de arriba
 
 ### Error de CORS
 

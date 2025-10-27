@@ -83,9 +83,9 @@ Considera:
   let sentiment = analysis.sentiment;
   const score = Math.max(-1, Math.min(1, analysis.score));
   
-  // Ajustar sentimiento si no coincide con el score
-  if (score > 0.15 && sentiment === 'neutral') sentiment = 'positivo';
-  if (score < -0.15 && sentiment === 'neutral') sentiment = 'negativo';
+  // Ajustar sentimiento si no coincide con el score (umbrales muy bajos)
+  if (score > 0.05 && sentiment === 'neutral') sentiment = 'positivo';
+  if (score < -0.05 && sentiment === 'neutral') sentiment = 'negativo';
   
   return {
     score,
@@ -103,10 +103,10 @@ function analyzeSentimentWithFallback(text: string): SentimentAnalysis {
   // Normalizar score a rango -1 a 1
   const normalizedScore = Math.max(-1, Math.min(1, result.score / 10));
   
-  // Determinar sentimiento con umbrales más sensibles
+  // Determinar sentimiento con umbrales muy sensibles
   let sentimentLabel: 'positivo' | 'neutral' | 'negativo';
-  if (normalizedScore > 0.1) sentimentLabel = 'positivo';  // Reducido de 0.2 a 0.1
-  else if (normalizedScore < -0.1) sentimentLabel = 'negativo';  // Reducido de -0.2 a -0.1
+  if (normalizedScore > 0.05) sentimentLabel = 'positivo';  // Muy sensible: 0.05
+  else if (normalizedScore < -0.05) sentimentLabel = 'negativo';  // Muy sensible: -0.05
   else sentimentLabel = 'neutral';
   
   // Detectar emociones básicas por palabras clave en español
@@ -122,12 +122,12 @@ function analyzeSentimentWithFallback(text: string): SentimentAnalysis {
   
   // Si detectamos emociones pero el score es neutral, ajustarlo
   let adjustedScore = normalizedScore;
-  if (emotions.includes('esperanza') && normalizedScore >= -0.1 && normalizedScore <= 0.1) {
-    adjustedScore = 0.3;
+  if (emotions.includes('esperanza') && normalizedScore >= -0.05 && normalizedScore <= 0.05) {
+    adjustedScore = 0.4;
     sentimentLabel = 'positivo';
   }
-  if (emotions.includes('preocupación') && normalizedScore >= -0.1 && normalizedScore <= 0.1) {
-    adjustedScore = -0.3;
+  if (emotions.includes('preocupación') && normalizedScore >= -0.05 && normalizedScore <= 0.05) {
+    adjustedScore = -0.4;
     sentimentLabel = 'negativo';
   }
   
