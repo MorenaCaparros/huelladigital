@@ -32,6 +32,11 @@ export default function Home() {
   const [isEventEnded, setIsEventEnded] = useState(false);
   const [debugMode, setDebugMode] = useState(false);
 
+  // Scroll to top cuando cambia el step
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [step]);
+
   // Verificar si el evento ya terminó y si el usuario ya participó
   useEffect(() => {
     // Detectar modo debug desde la URL
