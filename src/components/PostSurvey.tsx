@@ -26,6 +26,7 @@ export default function PostSurvey({ onNext, preSurveyData }: PostSurveyProps) {
     if (currentQuestion < surveyQuestions.length - 1) {
       setDirection(1);
       setCurrentQuestion(currentQuestion + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       onNext(answers);
     }
@@ -35,6 +36,7 @@ export default function PostSurvey({ onNext, preSurveyData }: PostSurveyProps) {
     if (currentQuestion > 0) {
       setDirection(-1);
       setCurrentQuestion(currentQuestion - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 

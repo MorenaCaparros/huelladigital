@@ -87,3 +87,12 @@ export const questionLabels: { [key: string]: string } = {
   educacion: 'Accesibilidad Educativa',
   arte: 'Creatividad IA',
 };
+
+// Versión corta para móviles
+export const questionLabelsMobile: { [key: string]: string } = {
+  sociedad: 'Productividad',
+  preparacion: 'Preparación',
+  salud: 'IA Médica',
+  educacion: 'Educación',
+  arte: 'Creatividad',
+};

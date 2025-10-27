@@ -8,7 +8,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Sparkles, TrendingUp, Download, FileText, Share2, Facebook, Instagram, Linkedin, Globe } from 'lucide-react';
 import type { UserData, SurveyResponse } from '@/app/page';
-import { questionLabels, emotions as emotionData } from '@/utils/questions';
+import { questionLabels, questionLabelsMobile, emotions as emotionData } from '@/utils/questions';
 import { compareSentiments, type SentimentAnalysis } from '@/utils/sentimentAnalysis';
 
 interface HuellaResultProps {
@@ -26,11 +26,22 @@ const emotionLabels: { [key: string]: { label: string; emoji: string } } =
 export default function HuellaResult({ userData, preSurveyData, postSurveyData }: HuellaResultProps) {
   const huellaRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [sentimentAnalysis, setSentimentAnalysis] = useState<{
     esperanza?: { before: SentimentAnalysis; after: SentimentAnalysis; change: number };
     preocupacion?: { before: SentimentAnalysis; after: SentimentAnalysis; change: number };
   }>({});
   const [analyzing, setAnalyzing] = useState(true);
+
+  // Detectar si es móvil
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Analizar sentimientos al montar el componente
   useEffect(() => {
@@ -91,7 +102,7 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
 
   // Prepare data for radar chart
   const radarData = Object.keys(questionLabels).map(key => ({
-    subject: questionLabels[key],
+    subject: isMobile ? questionLabelsMobile[key] : questionLabels[key],
     antes: Number(preSurveyData[key]) || 0,
     despues: Number(postSurveyData[key]) || 0,
   }));
@@ -392,14 +403,15 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
               Evolución de Percepciones
             </h2>
             <div className="w-full overflow-x-auto">
-              <ResponsiveContainer width="100%" height={350} minWidth={300}>
-                <RadarChart data={radarData}>
+              <ResponsiveContainer width="100%" height={400} minWidth={320}>
+                <RadarChart data={radarData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                   <PolarGrid stroke="#e5e7eb" />
                   <PolarAngleAxis 
                     dataKey="subject" 
-                    tick={{ fill: '#4b5563', fontSize: 11 }}
+                    tick={{ fill: '#4b5563', fontSize: 9 }}
+                    tickLine={false}
                   />
-                  <PolarRadiusAxis angle={90} domain={[0, 5]} tick={{ fill: '#9ca3af' }} />
+                  <PolarRadiusAxis angle={90} domain={[0, 5]} tick={{ fill: '#9ca3af', fontSize: 10 }} />
                   <Radar
                     name="Antes del evento"
                     dataKey="antes"

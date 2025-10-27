@@ -83,7 +83,6 @@ export default function Home() {
   // Enviar datos a Google Sheets
   const sendToGoogleSheets = async (data: any) => {
     try {
-      // Esta URL será del Google Apps Script (lo configuramos después)
       const scriptURL = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL;
       
       if (!scriptURL) {
@@ -91,7 +90,9 @@ export default function Home() {
         return;
       }
 
-      await fetch(scriptURL, {
+      console.log('Enviando a Google Sheets:', { scriptURL, dataKeys: Object.keys(data) });
+
+      const response = await fetch(scriptURL, {
         method: 'POST',
         mode: 'no-cors',
         headers: {
@@ -99,6 +100,8 @@ export default function Home() {
         },
         body: JSON.stringify(data),
       });
+      
+      console.log('Datos enviados a Google Sheets correctamente');
     } catch (error) {
       console.error('Error sending to Google Sheets:', error);
     }
