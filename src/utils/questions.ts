@@ -54,7 +54,7 @@ export const surveyQuestions: Question[] = [
     category: '💭 Reflexión Personal',
     question: '¿Qué te genera mayor esperanza sobre la IA?',
     type: 'text',
-    placeholder: 'Escribe tu respuesta aquí...',
+    placeholder: 'Escribí tu respuesta aquí para que la IA pueda analizarla...',
     maxLength: 200
   },
   {
@@ -62,7 +62,7 @@ export const surveyQuestions: Question[] = [
     category: '💭 Reflexión Personal',
     question: '¿Qué te preocupa más sobre la IA?',
     type: 'text',
-    placeholder: 'Escribe tu respuesta aquí...',
+    placeholder: 'Escribí tu respuesta aquí para que la IA pueda analizarla...',
     maxLength: 200
   },
   {

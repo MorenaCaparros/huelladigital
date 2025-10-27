@@ -38,7 +38,15 @@ export default function PostSurvey({ onNext, preSurveyData }: PostSurveyProps) {
     }
   };
 
-  const canProceed = answers[question.id] !== undefined;
+  const canProceed = (() => {
+    const answer = answers[question.id];
+    if (answer === undefined) return false;
+    // For text inputs, ensure they have content (not just whitespace)
+    if (question.type === 'text') {
+      return typeof answer === 'string' && answer.trim().length > 0;
+    }
+    return true;
+  })();
 
   const getChangeIndicator = () => {
     if (!preSurveyData) return null;

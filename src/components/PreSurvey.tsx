@@ -37,7 +37,15 @@ export default function PreSurvey({ onNext }: PreSurveyProps) {
     }
   };
 
-  const canProceed = answers[question.id] !== undefined;
+  const canProceed = (() => {
+    const answer = answers[question.id];
+    if (answer === undefined) return false;
+    // For text inputs, ensure they have content (not just whitespace)
+    if (question.type === 'text') {
+      return typeof answer === 'string' && answer.trim().length > 0;
+    }
+    return true;
+  })();
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">

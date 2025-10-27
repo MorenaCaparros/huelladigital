@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { Sparkles, TrendingUp, Download, FileText, Share2 } from 'lucide-react';
+import { Sparkles, TrendingUp, Download, FileText, Share2, Facebook, Instagram, Linkedin, Globe } from 'lucide-react';
 import type { UserData, SurveyResponse } from '@/app/page';
 import { questionLabels, emotions as emotionData } from '@/utils/questions';
 import { compareSentiments, type SentimentAnalysis } from '@/utils/sentimentAnalysis';
@@ -119,17 +119,28 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
     setDownloading(true);
     try {
       const canvas = await html2canvas(huellaRef.current, {
-        scale: 3,
+        scale: 2,
         backgroundColor: '#ffffff',
+        logging: false,
+        useCORS: true,
       });
       
       const imgData = canvas.toDataURL('image/png');
-      // Formato cuadrado para mejor compartir en redes sociales
-      const pdf = new jsPDF('p', 'px', [1080, 1080]);
-      pdf.addImage(imgData, 'PNG', 0, 0, 1080, 1080);
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      
+      // Create PDF with proper aspect ratio
+      const pdf = new jsPDF({
+        orientation: imgWidth > imgHeight ? 'landscape' : 'portrait',
+        unit: 'px',
+        format: [imgWidth, imgHeight]
+      });
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
       pdf.save(`huella-ia-${userData.nombre}-${userData.apellido}.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);
+      alert('Hubo un error al generar el PDF. Por favor, intentá nuevamente.');
     } finally {
       setDownloading(false);
     }
@@ -141,19 +152,36 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
     setDownloading(true);
     try {
       const canvas = await html2canvas(huellaRef.current, {
-        scale: 3,
+        scale: 2,
         backgroundColor: '#ffffff',
+        logging: false,
+        useCORS: true,
       });
       
       const link = document.createElement('a');
       link.download = `huella-ia-${userData.nombre}-${userData.apellido}.png`;
-      link.href = canvas.toDataURL();
+      link.href = canvas.toDataURL('image/png');
       link.click();
     } catch (error) {
       console.error('Error generating image:', error);
+      alert('Hubo un error al generar la imagen. Por favor, intentá nuevamente.');
     } finally {
       setDownloading(false);
     }
+  };
+
+  const handleShare = (platform: 'facebook' | 'instagram' | 'linkedin' | 'website') => {
+    const shareText = `Acabo de descubrir mi Huella IA en el evento #IAxMDP2025 de @Global.IA 🤖✨\n\n¡Descargá tu resultado y compartilo!`;
+    const shareUrl = 'https://www.global.ia'; // URL del sitio web de Global.IA
+    
+    const urls = {
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`,
+      instagram: 'https://www.instagram.com/global.ia/', // Instagram no permite compartir directo, abrimos el perfil
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+      website: shareUrl
+    };
+
+    window.open(urls[platform], platform === 'instagram' || platform === 'website' ? '_blank' : 'popup', 'width=600,height=600');
   };
 
   return (
@@ -162,14 +190,14 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6 }}
-        className="bg-white rounded-2xl shadow-2xl p-8 max-w-4xl w-full"
+        className="bg-white rounded-2xl shadow-2xl p-4 sm:p-8 max-w-4xl w-full"
       >
         {/* Confetti effect could be added here */}
         
         {/* Downloadable Section */}
-        <div ref={huellaRef} className="bg-white p-8">
+        <div ref={huellaRef} className="bg-white p-4 sm:p-8">
           {/* Header */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6 sm:mb-8">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -359,36 +387,38 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
           )}
 
           {/* Radar Chart */}
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+          <div className="mb-8 -mx-4 sm:mx-0">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4 text-center px-4 sm:px-0">
               Evolución de Percepciones
             </h2>
-            <ResponsiveContainer width="100%" height={350}>
-              <RadarChart data={radarData}>
-                <PolarGrid stroke="#e5e7eb" />
-                <PolarAngleAxis 
-                  dataKey="subject" 
-                  tick={{ fill: '#4b5563', fontSize: 12 }}
-                />
-                <PolarRadiusAxis angle={90} domain={[0, 5]} tick={{ fill: '#9ca3af' }} />
-                <Radar
-                  name="Antes del evento"
-                  dataKey="antes"
-                  stroke="#0066cc"
-                  fill="#0066cc"
-                  fillOpacity={0.3}
-                  strokeWidth={2}
-                />
-                <Radar
-                  name="Después del evento"
-                  dataKey="despues"
-                  stroke="#00a2e8"
-                  fill="#00a2e8"
-                  fillOpacity={0.5}
-                  strokeWidth={2}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
+            <div className="w-full overflow-x-auto">
+              <ResponsiveContainer width="100%" height={350} minWidth={300}>
+                <RadarChart data={radarData}>
+                  <PolarGrid stroke="#e5e7eb" />
+                  <PolarAngleAxis 
+                    dataKey="subject" 
+                    tick={{ fill: '#4b5563', fontSize: 11 }}
+                  />
+                  <PolarRadiusAxis angle={90} domain={[0, 5]} tick={{ fill: '#9ca3af' }} />
+                  <Radar
+                    name="Antes del evento"
+                    dataKey="antes"
+                    stroke="#0066cc"
+                    fill="#0066cc"
+                    fillOpacity={0.3}
+                    strokeWidth={2}
+                  />
+                  <Radar
+                    name="Después del evento"
+                    dataKey="despues"
+                    stroke="#00a2e8"
+                    fill="#00a2e8"
+                    fillOpacity={0.5}
+                    strokeWidth={2}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
             
             <div className="flex justify-center gap-6 mt-4">
               <div className="flex items-center gap-2">
@@ -503,6 +533,59 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
               {downloading ? 'Generando...' : 'Descargar PDF'}
             </motion.button>
           </div>
+
+          {/* Social Media Share Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mt-6"
+          >
+            <p className="text-sm font-semibold text-gray-700 mb-3 text-center">
+              Compartí en redes sociales:
+            </p>
+            <div className="flex justify-center gap-3">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleShare('facebook')}
+                className="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors shadow-md"
+                title="Compartir en Facebook"
+              >
+                <Facebook className="w-5 h-5" />
+              </motion.button>
+              
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleShare('instagram')}
+                className="p-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:from-purple-700 hover:to-pink-700 transition-colors shadow-md"
+                title="Seguinos en Instagram"
+              >
+                <Instagram className="w-5 h-5" />
+              </motion.button>
+              
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleShare('linkedin')}
+                className="p-3 bg-blue-700 text-white rounded-full hover:bg-blue-800 transition-colors shadow-md"
+                title="Compartir en LinkedIn"
+              >
+                <Linkedin className="w-5 h-5" />
+              </motion.button>
+              
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleShare('website')}
+                className="p-3 bg-gray-700 text-white rounded-full hover:bg-gray-800 transition-colors shadow-md"
+                title="Visitar Global.IA"
+              >
+                <Globe className="w-5 h-5" />
+              </motion.button>
+            </div>
+          </motion.div>
         </div>
 
         {userData.email && (
