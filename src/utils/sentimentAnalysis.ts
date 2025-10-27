@@ -52,14 +52,23 @@ async function analyzeSentimentWithGemini(text: string): Promise<Omit<SentimentA
   const model = genAI!.getGenerativeModel({ model: 'gemini-pro' });
 
   const prompt = `Analiza el sentimiento del siguiente texto en español sobre Inteligencia Artificial.
+
+IMPORTANTE: Sé específico y no uses "neutral" a menos que el texto sea realmente neutral. La mayoría de los textos tienen alguna inclinación positiva o negativa.
+
 Responde SOLO con un objeto JSON válido (sin markdown, sin explicaciones adicionales) con esta estructura exacta:
 {
-  "score": número entre -1 y 1 (-1 muy negativo, 0 neutral, 1 muy positivo),
-  "sentiment": "positivo" | "neutral" | "negativo",
-  "emotions": ["emoción1", "emoción2"] (máximo 3 emociones detectadas como: esperanza, miedo, curiosidad, preocupación, entusiasmo, ansiedad)
+  "score": número entre -1 y 1 (donde: -1 = muy negativo, -0.5 = negativo, 0 = completamente neutral, 0.5 = positivo, 1 = muy positivo),
+  "sentiment": "positivo" | "neutral" | "negativo" (usa "neutral" solo si el texto no expresa opinión),
+  "emotions": ["emoción1", "emoción2"] (máximo 3 emociones detectadas como: esperanza, miedo, curiosidad, preocupación, entusiasmo, ansiedad, optimismo, escepticismo)
 }
 
-Texto a analizar: "${text}"`;
+Texto a analizar: "${text}"
+
+Considera:
+- Palabras positivas: espero, creo, bien, mejor, ayudar, beneficio, oportunidad, avance, positivo, útil, bueno
+- Palabras negativas: preocupa, miedo, riesgo, peligro, malo, peor, problema, amenaza, negativo, difícil
+- Si hay expectativas o esperanzas, el sentimiento tiende a positivo
+- Si hay preocupaciones o miedos, el sentimiento tiende a negativo`;
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
@@ -70,9 +79,17 @@ Texto a analizar: "${text}"`;
   
   const analysis = JSON.parse(cleanText);
   
+  // Validar que el sentimiento coincida con el score
+  let sentiment = analysis.sentiment;
+  const score = Math.max(-1, Math.min(1, analysis.score));
+  
+  // Ajustar sentimiento si no coincide con el score
+  if (score > 0.15 && sentiment === 'neutral') sentiment = 'positivo';
+  if (score < -0.15 && sentiment === 'neutral') sentiment = 'negativo';
+  
   return {
-    score: Math.max(-1, Math.min(1, analysis.score)), // Asegurar rango -1 a 1
-    sentiment: analysis.sentiment,
+    score,
+    sentiment,
     emotions: analysis.emotions || []
   };
 }
@@ -86,25 +103,36 @@ function analyzeSentimentWithFallback(text: string): SentimentAnalysis {
   // Normalizar score a rango -1 a 1
   const normalizedScore = Math.max(-1, Math.min(1, result.score / 10));
   
-  // Determinar sentimiento
+  // Determinar sentimiento con umbrales más sensibles
   let sentimentLabel: 'positivo' | 'neutral' | 'negativo';
-  if (normalizedScore > 0.2) sentimentLabel = 'positivo';
-  else if (normalizedScore < -0.2) sentimentLabel = 'negativo';
+  if (normalizedScore > 0.1) sentimentLabel = 'positivo';  // Reducido de 0.2 a 0.1
+  else if (normalizedScore < -0.1) sentimentLabel = 'negativo';  // Reducido de -0.2 a -0.1
   else sentimentLabel = 'neutral';
   
   // Detectar emociones básicas por palabras clave en español
   const emotions: string[] = [];
   const lowerText = text.toLowerCase();
   
-  if (lowerText.match(/esper|optimis|positiv|bien|bueno|mejor/)) emotions.push('esperanza');
-  if (lowerText.match(/mied|temor|terror|asust|preocup/)) emotions.push('preocupación');
+  if (lowerText.match(/esper|optimis|positiv|bien|bueno|mejor|creo que|ayud|benefici|oportunid/)) emotions.push('esperanza');
+  if (lowerText.match(/mied|temor|terror|asust|preocup|riesgo|peligr/)) emotions.push('preocupación');
   if (lowerText.match(/curios|interes|aprend|descubr/)) emotions.push('curiosidad');
-  if (lowerText.match(/entusias|emocion|feliz|alegr/)) emotions.push('entusiasmo');
+  if (lowerText.match(/entusias|emocion|feliz|alegr|content/)) emotions.push('entusiasmo');
   if (lowerText.match(/ansied|nervios|inquiet/)) emotions.push('ansiedad');
-  if (lowerText.match(/frustrac|enojo|molest/)) emotions.push('frustración');
+  if (lowerText.match(/frustrac|enojo|molest|enfad/)) emotions.push('frustración');
+  
+  // Si detectamos emociones pero el score es neutral, ajustarlo
+  let adjustedScore = normalizedScore;
+  if (emotions.includes('esperanza') && normalizedScore >= -0.1 && normalizedScore <= 0.1) {
+    adjustedScore = 0.3;
+    sentimentLabel = 'positivo';
+  }
+  if (emotions.includes('preocupación') && normalizedScore >= -0.1 && normalizedScore <= 0.1) {
+    adjustedScore = -0.3;
+    sentimentLabel = 'negativo';
+  }
   
   return {
-    score: normalizedScore,
+    score: adjustedScore,
     sentiment: sentimentLabel,
     emotions: emotions.slice(0, 3), // Máximo 3 emociones
     method: 'fallback'

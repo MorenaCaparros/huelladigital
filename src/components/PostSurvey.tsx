@@ -41,12 +41,29 @@ export default function PostSurvey({ onNext, preSurveyData }: PostSurveyProps) {
   const canProceed = (() => {
     const answer = answers[question.id];
     if (answer === undefined) return false;
-    // For text inputs, ensure they have content (not just whitespace)
+    // Para inputs de texto, validar contenido significativo
     if (question.type === 'text') {
-      return typeof answer === 'string' && answer.trim().length > 0;
+      if (typeof answer !== 'string') return false;
+      const text = answer.trim();
+      if (text.length < 10) return false; // Mínimo 10 caracteres
+      // Debe tener al menos 5 letras (no solo números/símbolos)
+      const letterCount = (text.match(/[a-záéíóúñA-ZÁÉÍÓÚÑ]/g) || []).length;
+      return letterCount >= 5;
     }
     return true;
   })();
+
+  const getValidationMessage = () => {
+    if (question.type !== 'text') return null;
+    const answer = answers[question.id];
+    if (!answer || typeof answer !== 'string') return null;
+    const text = answer.trim();
+    if (text.length === 0) return null;
+    if (text.length < 10) return 'Escribí al menos 10 caracteres';
+    const letterCount = (text.match(/[a-záéíóúñA-ZÁÉÍÓÚÑ]/g) || []).length;
+    if (letterCount < 5) return 'Tu respuesta debe contener palabras, no solo números o símbolos';
+    return null;
+  };
 
   const getChangeIndicator = () => {
     if (!preSurveyData) return null;
@@ -158,13 +175,20 @@ export default function PostSurvey({ onNext, preSurveyData }: PostSurveyProps) {
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all resize-none"
                   rows={4}
                 />
-                <div className="flex justify-between mt-2">
-                  <p className="text-xs text-gray-500">
-                    🤖 Analizaremos cómo cambió tu percepción
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {((answers[question.id] as string) || '').length} / {question.maxLength}
-                  </p>
+                <div className="mt-2">
+                  <div className="flex justify-between">
+                    <p className="text-xs text-gray-500">
+                      🤖 Analizaremos cómo cambió tu percepción
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {((answers[question.id] as string) || '').length} / {question.maxLength}
+                    </p>
+                  </div>
+                  {getValidationMessage() && (
+                    <p className="text-xs text-red-500 mt-1">
+                      ⚠️ {getValidationMessage()}
+                    </p>
+                  )}
                 </div>
               </div>
             ) : (
