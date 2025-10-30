@@ -40,31 +40,20 @@ export default function RegenerarHuella() {
         throw new Error('No se encontraron datos completos para este email');
       }
 
-      console.log('📊 Datos recibidos de Google Sheets:', data);
-      console.log('📊 preSurvey original:', data.preSurvey);
-      console.log('📊 postSurvey original:', data.postSurvey);
-
       // Convertir valores numéricos (vienen como strings desde Sheets)
-      const convertToNumbers = (survey: any) => {
-        const converted = {
-          q1: Number(survey.q1) || 0,
-          q2: Number(survey.q2) || 0,
-          q3: Number(survey.q3) || 0,
-          q4: Number(survey.q4) || 0,
-          q5: Number(survey.q5) || 0,
-          esperanza_text: survey.esperanza_text || '',
-          preocupacion_text: survey.preocupacion_text || '',
-          emocion: survey.emocion || ''
-        };
-        console.log('🔢 Valores convertidos:', converted);
-        return converted;
-      };
+      const convertToNumbers = (survey: any): SurveyResponse => ({
+        q1: Number(survey.q1) || 0,
+        q2: Number(survey.q2) || 0,
+        q3: Number(survey.q3) || 0,
+        q4: Number(survey.q4) || 0,
+        q5: Number(survey.q5) || 0,
+        esperanza_text: survey.esperanza_text || '',
+        preocupacion_text: survey.preocupacion_text || '',
+        emocion: survey.emocion || ''
+      });
 
       const preSurveyConverted = convertToNumbers(data.preSurvey);
       const postSurveyConverted = convertToNumbers(data.postSurvey);
-
-      console.log('✅ preSurvey convertido:', preSurveyConverted);
-      console.log('✅ postSurvey convertido:', postSurveyConverted);
 
       // Reconstruir los datos en el formato esperado
       setHuellaData({
