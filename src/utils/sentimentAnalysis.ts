@@ -49,7 +49,7 @@ export async function analyzeSentiment(text: string): Promise<SentimentAnalysis>
  * Análisis con Google Gemini AI
  */
 async function analyzeSentimentWithGemini(text: string): Promise<Omit<SentimentAnalysis, 'method'>> {
-  const model = genAI!.getGenerativeModel({ model: 'gemini-pro' });
+  const model = genAI!.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
   const prompt = `Analiza el sentimiento del siguiente texto en español sobre Inteligencia Artificial.
 
