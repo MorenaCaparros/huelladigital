@@ -633,30 +633,6 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
             </div>
           </motion.div>
         </div>
-
-        {userData.email && (
-          <div className="text-center mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
-            <p className="text-sm text-gray-700 mb-2">
-              📧 Guardamos tus datos en{' '}
-              <a 
-                href="mailto:globalia@globalia.org"
-                className="text-blue-600 hover:underline font-medium"
-              >
-                globalia@globalia.org
-              </a>
-            </p>
-            <p className="text-xs text-gray-500">
-              💡 <strong>Tip:</strong> Podés regenerar tu huella en cualquier momento visitando{' '}
-              <a 
-                href="/regenerar"
-                target="_blank"
-                className="text-blue-600 hover:underline font-medium"
-              >
-                /regenerar
-              </a>
-            </p>
-          </div>
-        )}
       </motion.div>
     </div>
   );
