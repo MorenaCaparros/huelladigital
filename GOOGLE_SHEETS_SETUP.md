@@ -10,11 +10,11 @@ Este documento explica cómo conectar la aplicación con Google Sheets para alma
    - timestamp
    - userId
    - type (pre-survey o post-survey)
-   - confianza_ia
-   - impacto_laboral
-   - regulacion
-   - privacidad
-   - innovacion
+   - sociedad
+   - preparacion
+   - salud
+   - educacion
+   - arte
    - esperanza_text
    - preocupacion_text
    - emocion
