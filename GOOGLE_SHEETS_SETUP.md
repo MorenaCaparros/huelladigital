@@ -12,7 +12,7 @@ Este documento explica cómo conectar la aplicación con Google Sheets para alma
    - nombre
    - apellido
    - email
-   - type (pre-survey o post-survey)
+   - type (pre-survey, post-survey o huella-image)
    - sociedad
    - preparacion
    - salud
@@ -21,6 +21,7 @@ Este documento explica cómo conectar la aplicación con Google Sheets para alma
    - esperanza_text
    - preocupacion_text
    - emocion
+   - huella_image (imagen en formato base64 - solo para type="huella-image")
 
 ## Paso 2: Crear el Google Apps Script
 
@@ -47,7 +48,8 @@ function doPost(e) {
       data.arte || '',
       data.esperanza_text || '',
       data.preocupacion_text || '',
-      data.emocion || ''
+      data.emocion || '',
+      data.huella_image || ''
     ];
     
     sheet.appendRow(row);

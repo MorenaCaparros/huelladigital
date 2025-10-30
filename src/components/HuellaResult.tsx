@@ -15,6 +15,7 @@ interface HuellaResultProps {
   userData: UserData;
   preSurveyData: SurveyResponse;
   postSurveyData: SurveyResponse;
+  onHuellaGenerated?: (imageDataUrl: string) => void;
 }
 
 const emotionLabels: { [key: string]: { label: string; emoji: string } } = 
@@ -23,7 +24,7 @@ const emotionLabels: { [key: string]: { label: string; emoji: string } } =
     return acc;
   }, {} as { [key: string]: { label: string; emoji: string } });
 
-export default function HuellaResult({ userData, preSurveyData, postSurveyData }: HuellaResultProps) {
+export default function HuellaResult({ userData, preSurveyData, postSurveyData, onHuellaGenerated }: HuellaResultProps) {
   const huellaRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -32,6 +33,7 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
     preocupacion?: { before: SentimentAnalysis; after: SentimentAnalysis; change: number };
   }>({});
   const [analyzing, setAnalyzing] = useState(true);
+  const [huellaGenerated, setHuellaGenerated] = useState(false);
 
   // Detectar si es móvil
   useEffect(() => {
@@ -77,6 +79,36 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData }
     
     analyzeSentiments();
   }, [preSurveyData, postSurveyData]);
+
+  // Generar imagen de la huella automáticamente cuando termine de cargar
+  useEffect(() => {
+    async function generateHuella() {
+      if (!huellaRef.current || analyzing || huellaGenerated || !onHuellaGenerated) return;
+      
+      try {
+        // Esperar un poco para que todo se renderice
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const canvas = await html2canvas(huellaRef.current, {
+          scale: 2,
+          backgroundColor: '#ffffff',
+          logging: false,
+          useCORS: true,
+        });
+        
+        const imageDataUrl = canvas.toDataURL('image/png');
+        onHuellaGenerated(imageDataUrl);
+        setHuellaGenerated(true);
+        console.log('✅ Huella generada y guardada');
+      } catch (error) {
+        console.error('Error generando huella:', error);
+      }
+    }
+    
+    if (!analyzing) {
+      generateHuella();
+    }
+  }, [analyzing, huellaGenerated, onHuellaGenerated]);
 
   // Validación de datos - DESPUÉS de los hooks
   if (!preSurveyData || !postSurveyData) {
