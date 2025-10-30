@@ -27,28 +27,23 @@ Este documento explica cómo conectar la aplicación con Google Sheets para alma
 ```javascript
 function doPost(e) {
   try {
-    // Obtener la hoja activa
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    
-    // Parsear los datos recibidos
     const data = JSON.parse(e.postData.contents);
     
-    // Crear array con los valores en el orden de las columnas
     const row = [
       data.timestamp || new Date().toISOString(),
       data.userId || '',
       data.type || '',
-      data.confianza_ia || '',
-      data.impacto_laboral || '',
-      data.regulacion || '',
-      data.privacidad || '',
-      data.innovacion || '',
+      data.sociedad || '',
+      data.preparacion || '',
+      data.salud || '',
+      data.educacion || '',
+      data.arte || '',
       data.esperanza_text || '',
       data.preocupacion_text || '',
       data.emocion || ''
     ];
     
-    // Agregar fila a la hoja
     sheet.appendRow(row);
     
     return ContentService
