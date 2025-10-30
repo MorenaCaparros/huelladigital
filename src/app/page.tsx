@@ -134,6 +134,8 @@ export default function Home() {
         sendToGoogleSheets({
           timestamp: new Date().toISOString(),
           userId: userData?.userId,
+          nombre: userData?.nombre || '',
+          apellido: userData?.apellido || '',
           email: userData?.email || '',
           type: 'pre-survey',
           ...data,
@@ -155,6 +157,8 @@ export default function Home() {
         sendToGoogleSheets({
           timestamp: new Date().toISOString(),
           userId: userData?.userId,
+          nombre: userData?.nombre || '',
+          apellido: userData?.apellido || '',
           email: userData?.email || '',
           type: 'post-survey',
           ...data,
