@@ -40,6 +40,20 @@ export default function RegenerarHuella() {
         throw new Error('No se encontraron datos completos para este email');
       }
 
+      console.log('📊 Datos recibidos de Google Sheets:', data);
+
+      // Convertir valores numéricos (vienen como strings desde Sheets)
+      const convertToNumbers = (survey: any) => ({
+        q1: Number(survey.q1) || 0,
+        q2: Number(survey.q2) || 0,
+        q3: Number(survey.q3) || 0,
+        q4: Number(survey.q4) || 0,
+        q5: Number(survey.q5) || 0,
+        esperanza_text: survey.esperanza_text || '',
+        preocupacion_text: survey.preocupacion_text || '',
+        emocion: survey.emocion || ''
+      });
+
       // Reconstruir los datos en el formato esperado
       setHuellaData({
         userData: {
@@ -48,8 +62,8 @@ export default function RegenerarHuella() {
           email: data.email,
           userId: data.userId || 'regenerated',
         },
-        preSurveyData: data.preSurvey,
-        postSurveyData: data.postSurvey,
+        preSurveyData: convertToNumbers(data.preSurvey),
+        postSurveyData: convertToNumbers(data.postSurvey),
       });
     } catch (err) {
       console.error('Error:', err);
