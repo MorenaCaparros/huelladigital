@@ -113,10 +113,14 @@ NEXT_PUBLIC_GOOGLE_SCRIPT_URL=https://script.google.com/macros/s/TU_SCRIPT_ID_AQ
 
 ## Notas importantes
 
-- Los datos son completamente anónimos (solo se guarda un userId generado aleatoriamente)
-- No se guarda nombre, apellido, email ni ningún dato personal identificable en Google Sheets
+- Los datos se guardan en una **cola con reintentos automáticos** para evitar pérdida de datos
+- La cola procesa un envío cada 1.5 segundos para respetar los límites de Google Sheets
+- Si hay muchos usuarios simultáneos, los datos se guardan localmente y se envían gradualmente
+- Cada dato se reintenta hasta 5 veces antes de descartarse
+- Los datos son identificables con: userId, nombre, apellido, email (opcional)
 - Si la URL no está configurada, la app seguirá funcionando sin problemas, solo no guardará en Sheets
 - Puedes cambiar el orden de las columnas en el script si necesitas otro formato
+- En modo debug (`?debug=true`), verás un contador de items pendientes en la cola
 
 ## Solución de problemas
 

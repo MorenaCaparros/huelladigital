@@ -7,6 +7,7 @@ import Register from '@/components/Register';
 import PreSurvey from '@/components/PreSurvey';
 import PostSurvey from '@/components/PostSurvey';
 import HuellaResult from '@/components/HuellaResult';
+import { addToQueue, getQueueSize } from '@/utils/dataQueue';
 
 export type Step = 'welcome' | 'schedule' | 'register' | 'pre-survey' | 'waiting' | 'post-survey' | 'result';
 
@@ -31,6 +32,18 @@ export default function Home() {
   const [postSurveyData, setPostSurveyData] = useState<SurveyResponse | null>(null);
   const [isEventEnded, setIsEventEnded] = useState(false);
   const [debugMode, setDebugMode] = useState(false);
+  const [queueSize, setQueueSize] = useState(0);
+
+  // Actualizar tamaño de cola cada segundo (solo en debug mode)
+  useEffect(() => {
+    if (!debugMode) return;
+
+    const interval = setInterval(() => {
+      setQueueSize(getQueueSize());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [debugMode]);
 
   // Scroll to top cuando cambia el step
   useEffect(() => {
@@ -85,8 +98,8 @@ export default function Home() {
     // No limpiar localStorage automáticamente, el usuario puede querer ver sus resultados nuevamente
   };
 
-  // Enviar datos a Google Sheets
-  const sendToGoogleSheets = async (data: any) => {
+  // Enviar datos a Google Sheets usando cola con reintentos
+  const sendToGoogleSheets = (data: any) => {
     try {
       const scriptURL = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL;
       
@@ -95,20 +108,12 @@ export default function Home() {
         return;
       }
 
-      console.log('Enviando a Google Sheets:', { scriptURL, dataKeys: Object.keys(data) });
-
-      const response = await fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      // Agregar a la cola - se procesará automáticamente
+      addToQueue(data);
+      console.log('📦 Datos agregados a la cola de envío');
       
-      console.log('Datos enviados a Google Sheets correctamente');
     } catch (error) {
-      console.error('Error sending to Google Sheets:', error);
+      console.error('Error agregando a cola:', error);
     }
   };
 
@@ -181,7 +186,14 @@ export default function Home() {
     <main className="min-h-screen neural-bg">
       {debugMode && (
         <div className="fixed top-0 left-0 right-0 bg-yellow-400 text-black py-2 px-4 z-50 flex items-center justify-between">
-          <span className="text-xs font-bold">🐛 DEBUG MODE ACTIVO - Post-encuesta habilitada</span>
+          <div className="flex items-center gap-4">
+            <span className="text-xs font-bold">🐛 DEBUG MODE ACTIVO - Post-encuesta habilitada</span>
+            {queueSize > 0 && (
+              <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                📦 Cola: {queueSize} pendientes
+              </span>
+            )}
+          </div>
           <button
             onClick={handleReset}
             className="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-1 rounded transition-colors"
