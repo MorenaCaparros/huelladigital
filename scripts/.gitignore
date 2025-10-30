@@ -1,0 +1,12 @@
+# Datos de entrada
+data.csv
+
+# Resultados generados
+output/
+
+# Dependencias
+node_modules/
+package-lock.json
+
+# Logs
+*.log

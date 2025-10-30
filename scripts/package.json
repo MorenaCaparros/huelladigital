@@ -1,0 +1,12 @@
+{
+  "name": "huella-generator",
+  "version": "1.0.0",
+  "description": "Script para generar huellas masivamente",
+  "scripts": {
+    "generate": "node generate-huellas.js"
+  },
+  "dependencies": {
+    "csv-parse": "^5.5.3",
+    "puppeteer": "^21.6.1"
+  }
+}
