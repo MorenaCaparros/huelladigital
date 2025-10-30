@@ -12,7 +12,7 @@ Este documento explica cómo conectar la aplicación con Google Sheets para alma
    - nombre
    - apellido
    - email
-   - type (pre-survey, post-survey o huella-image)
+   - type (pre-survey o post-survey)
    - sociedad
    - preparacion
    - salud
@@ -21,7 +21,6 @@ Este documento explica cómo conectar la aplicación con Google Sheets para alma
    - esperanza_text
    - preocupacion_text
    - emocion
-   - huella_image (imagen en formato base64 - solo para type="huella-image")
 
 ## Paso 2: Crear el Google Apps Script
 
@@ -48,8 +47,7 @@ function doPost(e) {
       data.arte || '',
       data.esperanza_text || '',
       data.preocupacion_text || '',
-      data.emocion || '',
-      data.huella_image || ''
+      data.emocion || ''
     ];
     
     sheet.appendRow(row);
@@ -66,9 +64,104 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  return ContentService
-    .createTextOutput('Google Sheets API está funcionando')
-    .setMimeType(ContentService.MimeType.TEXT);
+  try {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    const email = e.parameter.email;
+    const action = e.parameter.action;
+    
+    // Si se solicita obtener datos por email
+    if (action === 'get' && email) {
+      const data = sheet.getDataRange().getValues();
+      const headers = data[0];
+      
+      // Buscar filas con este email
+      let preSurvey = null;
+      let postSurvey = null;
+      let userData = null;
+      
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        const rowEmail = row[4]; // columna email
+        const rowType = row[5];  // columna type
+        
+        if (rowEmail === email) {
+          const rowData = {};
+          headers.forEach((header, index) => {
+            rowData[header] = row[index];
+          });
+          
+          if (rowType === 'pre-survey') {
+            preSurvey = rowData;
+            userData = {
+              nombre: row[2],
+              apellido: row[3],
+              email: row[4],
+              userId: row[1]
+            };
+          } else if (rowType === 'post-survey') {
+            postSurvey = rowData;
+            if (!userData) {
+              userData = {
+                nombre: row[2],
+                apellido: row[3],
+                email: row[4],
+                userId: row[1]
+              };
+            }
+          }
+        }
+      }
+      
+      if (!preSurvey || !postSurvey) {
+        return ContentService
+          .createTextOutput(JSON.stringify({ 
+            result: 'error', 
+            error: 'No se encontraron datos completos para este email' 
+          }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      return ContentService
+        .createTextOutput(JSON.stringify({ 
+          result: 'success',
+          nombre: userData.nombre,
+          apellido: userData.apellido,
+          email: userData.email,
+          userId: userData.userId,
+          preSurvey: {
+            q1: preSurvey.sociedad,
+            q2: preSurvey.preparacion,
+            q3: preSurvey.salud,
+            q4: preSurvey.educacion,
+            q5: preSurvey.arte,
+            esperanza_text: preSurvey.esperanza_text,
+            preocupacion_text: preSurvey.preocupacion_text,
+            emocion: preSurvey.emocion
+          },
+          postSurvey: {
+            q1: postSurvey.sociedad,
+            q2: postSurvey.preparacion,
+            q3: postSurvey.salud,
+            q4: postSurvey.educacion,
+            q5: postSurvey.arte,
+            esperanza_text: postSurvey.esperanza_text,
+            preocupacion_text: postSurvey.preocupacion_text,
+            emocion: postSurvey.emocion
+          }
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    // Respuesta por defecto
+    return ContentService
+      .createTextOutput('Google Sheets API está funcionando')
+      .setMimeType(ContentService.MimeType.TEXT);
+      
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ result: 'error', error: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }
 ```
 

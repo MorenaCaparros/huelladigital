@@ -15,7 +15,6 @@ interface HuellaResultProps {
   userData: UserData;
   preSurveyData: SurveyResponse;
   postSurveyData: SurveyResponse;
-  onHuellaGenerated?: (imageDataUrl: string) => void;
 }
 
 const emotionLabels: { [key: string]: { label: string; emoji: string } } = 
@@ -24,7 +23,7 @@ const emotionLabels: { [key: string]: { label: string; emoji: string } } =
     return acc;
   }, {} as { [key: string]: { label: string; emoji: string } });
 
-export default function HuellaResult({ userData, preSurveyData, postSurveyData, onHuellaGenerated }: HuellaResultProps) {
+export default function HuellaResult({ userData, preSurveyData, postSurveyData }: HuellaResultProps) {
   const huellaRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -33,7 +32,6 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData, 
     preocupacion?: { before: SentimentAnalysis; after: SentimentAnalysis; change: number };
   }>({});
   const [analyzing, setAnalyzing] = useState(true);
-  const [huellaGenerated, setHuellaGenerated] = useState(false);
 
   // Detectar si es móvil
   useEffect(() => {
@@ -80,35 +78,7 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData, 
     analyzeSentiments();
   }, [preSurveyData, postSurveyData]);
 
-  // Generar imagen de la huella automáticamente cuando termine de cargar
-  useEffect(() => {
-    async function generateHuella() {
-      if (!huellaRef.current || analyzing || huellaGenerated || !onHuellaGenerated) return;
-      
-      try {
-        // Esperar un poco para que todo se renderice
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        const canvas = await html2canvas(huellaRef.current, {
-          scale: 2,
-          backgroundColor: '#ffffff',
-          logging: false,
-          useCORS: true,
-        });
-        
-        const imageDataUrl = canvas.toDataURL('image/png');
-        onHuellaGenerated(imageDataUrl);
-        setHuellaGenerated(true);
-        console.log('✅ Huella generada y guardada');
-      } catch (error) {
-        console.error('Error generando huella:', error);
-      }
-    }
-    
-    if (!analyzing) {
-      generateHuella();
-    }
-  }, [analyzing, huellaGenerated, onHuellaGenerated]);
+  // Ya no generamos imagen automáticamente - se puede regenerar después con los datos guardados
 
   // Validación de datos - DESPUÉS de los hooks
   if (!preSurveyData || !postSurveyData) {
@@ -166,6 +136,9 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData, 
         backgroundColor: '#ffffff',
         logging: false,
         useCORS: true,
+        allowTaint: true,
+        windowWidth: huellaRef.current.scrollWidth,
+        windowHeight: huellaRef.current.scrollHeight,
       });
       
       const imgData = canvas.toDataURL('image/png');
@@ -199,6 +172,9 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData, 
         backgroundColor: '#ffffff',
         logging: false,
         useCORS: true,
+        allowTaint: true,
+        windowWidth: huellaRef.current.scrollWidth,
+        windowHeight: huellaRef.current.scrollHeight,
       });
       
       const link = document.createElement('a');
@@ -257,7 +233,7 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData, 
         {/* Confetti effect could be added here */}
         
         {/* Downloadable Section */}
-        <div ref={huellaRef} className="bg-white p-4 sm:p-8">
+        <div ref={huellaRef} className="bg-white p-4 sm:p-8 w-full overflow-visible">
           {/* Header */}
           <div className="text-center mb-6 sm:mb-8">
             <motion.div
@@ -449,17 +425,17 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData, 
           )}
 
           {/* Radar Chart */}
-          <div className="mb-8 -mx-4 sm:mx-0">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4 text-center px-4 sm:px-0">
+          <div className="mb-8 w-full">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4 text-center">
               Evolución de Percepciones
             </h2>
-            <div className="w-full overflow-x-auto">
-              <ResponsiveContainer width="100%" height={400} minWidth={320}>
-                <RadarChart data={radarData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+            <div className="w-full" style={{ minHeight: '400px' }}>
+              <ResponsiveContainer width="100%" height={400}>
+                <RadarChart data={radarData} margin={{ top: 30, right: 30, bottom: 30, left: 30 }}>
                   <PolarGrid stroke="#e5e7eb" />
                   <PolarAngleAxis 
                     dataKey="subject" 
-                    tick={{ fill: '#4b5563', fontSize: 9 }}
+                    tick={{ fill: '#4b5563', fontSize: isMobile ? 9 : 11 }}
                     tickLine={false}
                   />
                   <PolarRadiusAxis angle={90} domain={[0, 5]} tick={{ fill: '#9ca3af', fontSize: 10 }} />
@@ -659,9 +635,27 @@ export default function HuellaResult({ userData, preSurveyData, postSurveyData, 
         </div>
 
         {userData.email && (
-          <p className="text-center text-sm text-gray-500 mt-4">
-            También te enviaremos una copia a <strong>{userData.email}</strong>
-          </p>
+          <div className="text-center mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+            <p className="text-sm text-gray-700 mb-2">
+              📧 Guardamos tus datos en{' '}
+              <a 
+                href="mailto:globalia@globalia.org"
+                className="text-blue-600 hover:underline font-medium"
+              >
+                globalia@globalia.org
+              </a>
+            </p>
+            <p className="text-xs text-gray-500">
+              💡 <strong>Tip:</strong> Podés regenerar tu huella en cualquier momento visitando{' '}
+              <a 
+                href="/regenerar"
+                target="_blank"
+                className="text-blue-600 hover:underline font-medium"
+              >
+                /regenerar
+              </a>
+            </p>
+          </div>
         )}
       </motion.div>
     </div>

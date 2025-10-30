@@ -246,18 +246,6 @@ export default function Home() {
           userData={userData!}
           preSurveyData={preSurveyData!}
           postSurveyData={postSurveyData!}
-          onHuellaGenerated={(imageDataUrl) => {
-            // Guardar la imagen de la huella en Google Sheets
-            sendToGoogleSheets({
-              timestamp: new Date().toISOString(),
-              userId: userData?.userId,
-              nombre: userData?.nombre || '',
-              apellido: userData?.apellido || '',
-              email: userData?.email || '',
-              type: 'huella-image',
-              huella_image: imageDataUrl,
-            });
-          }}
         />
       )}
       </div>
