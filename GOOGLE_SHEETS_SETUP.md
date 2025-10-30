@@ -9,6 +9,7 @@ Este documento explica cómo conectar la aplicación con Google Sheets para alma
 3. Asegúrate de tener las siguientes columnas en la primera fila:
    - timestamp
    - userId
+   - email
    - type (pre-survey o post-survey)
    - sociedad
    - preparacion
@@ -33,6 +34,7 @@ function doPost(e) {
     const row = [
       data.timestamp || new Date().toISOString(),
       data.userId || '',
+      data.email || '',
       data.type || '',
       data.sociedad || '',
       data.preparacion || '',

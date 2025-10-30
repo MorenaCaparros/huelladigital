@@ -134,6 +134,7 @@ export default function Home() {
         sendToGoogleSheets({
           timestamp: new Date().toISOString(),
           userId: userData?.userId,
+          email: userData?.email || '',
           type: 'pre-survey',
           ...data,
         });
@@ -154,10 +155,9 @@ export default function Home() {
         sendToGoogleSheets({
           timestamp: new Date().toISOString(),
           userId: userData?.userId,
+          email: userData?.email || '',
           type: 'post-survey',
-          preSurvey: preSurveyData,
-          postSurvey: data,
-          hasEmail: !!userData?.email,
+          ...data,
         });
         
         // No limpiar localStorage aún, se limpiará cuando el usuario termine de ver resultados
