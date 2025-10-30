@@ -1,0 +1,5 @@
+timestamp,userId,nombre,apellido,email,type,sociedad,preparacion,salud,educacion,arte,esperanza_text,preocupacion_text,emocion
+2025-10-30T10:00:00.000Z,user123,Juan,Pérez,juan@example.com,pre-survey,2,1,2,3,2,Espero que la IA ayude a mejorar la educación,Me preocupa la pérdida de empleos,🤔 Curioso
+2025-10-30T11:30:00.000Z,user123,Juan,Pérez,juan@example.com,post-survey,4,3,4,5,4,Ahora veo el potencial enorme de la IA para democratizar el conocimiento,Sigo preocupado por los empleos pero entiendo mejor cómo adaptarnos,😊 Esperanzado
+2025-10-30T10:15:00.000Z,user456,María,González,maria@example.com,pre-survey,1,2,1,2,3,La IA puede revolucionar la medicina,El uso indebido de datos personales,😟 Preocupado
+2025-10-30T11:45:00.000Z,user456,María,González,maria@example.com,post-survey,3,4,5,4,5,La IA médica salvará vidas y mejorará diagnósticos,Necesitamos regulaciones fuertes de privacidad,😌 Optimista
